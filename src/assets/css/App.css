@@ -1,0 +1,19 @@
+.Picklist {
+  width: 761px;
+  height: 951px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  margin: 24px 12px;
+}
+.Picklist .menuLeft {
+  width: 100px;
+  margin: 36px 0;
+}
+
+.TagProcessing {
+  width: 761px;
+  height: 951px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  margin: 24px 12px;
+}/*# sourceMappingURL=App.css.map */
