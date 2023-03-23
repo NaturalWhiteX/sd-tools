@@ -1,19 +1,55 @@
 .Picklist {
-  width: 761px;
-  height: 951px;
-  background: #FFFFFF;
+  height: 800px;
+  background: #ffffff;
   border-radius: 16px;
   margin: 24px 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
 }
+
 .Picklist .menuLeft {
-  width: 100px;
-  margin: 36px 0;
+  padding-top: 18px;
+  border-right: 1px solid #e5e6eb;
+}
+
+.Picklist .PickMain {
+  padding: 12px 24px;
 }
 
 .TagProcessing {
-  width: 761px;
-  height: 951px;
-  background: #FFFFFF;
+  height: 800px;
+  background: #ffffff;
   border-radius: 16px;
   margin: 24px 12px;
-}/*# sourceMappingURL=App.css.map */
+  padding: 12px;
+}
+
+.promptTag {
+  height: 36px;
+  border-radius: 4px;
+  background-color: #f7f9fa;
+  padding: 0px 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.promptTag .textTranslation {
+  color: #999999;
+}
+/*# sourceMappingURL=App.css.map */

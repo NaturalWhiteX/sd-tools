@@ -1,20 +1,49 @@
-.Picklist {
-    width: 761px;
-    height: 951px;
-    background: #FFFFFF;
-    border-radius: 16px;
-    margin: 24px 12px;
+$borderColor: #e5e6eb;
+$primaryColor: #395bed;
+$white: #ffffff;
+$cardBorderRadius: 16px;
 
-    .menuLeft{
-        width: 100px;
-        margin: 36px 0;
-    }
+.Picklist {
+  height: 800px;
+  background: $white;
+  border-radius: $cardBorderRadius;
+  margin: 24px 12px;
+  display: flex;
+  flex-flow: row nowrap;
+
+  .menuLeft {
+    padding-top: 18px;
+    border-right: 1px solid $borderColor;
+  }
+
+  .PickMain {
+    padding: 12px 24px;
+  }
 }
 
 .TagProcessing {
-    width: 761px;
-    height: 951px;
-    background: #FFFFFF;
-    border-radius: 16px;
-    margin: 24px 12px;
+  height: 800px;
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 24px 12px;
+  padding: 12px;
+}
+
+// 全局
+
+.promptTag {
+  height: 36px;
+  border-radius: 4px;
+  background-color: #f7f9fa;
+  padding: 0px 12px;
+  // flex
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  
+
+  .textTranslation{
+    color: #999999;
+  }
 }
