@@ -18,21 +18,27 @@
           <a-col flex="auto" class="PickMain">
             <h2>画面整体属性</h2>
             <a-tabs default-active-key="0">
-              <a-tab-pane key="0" title="常用" >
+              <a-tab-pane key="0" title="常用">
                 <a-space wrap>
-                  <div
-                    class="promptTag"
-                    v-for="(item, index) in Array_Tag"
-                    :key="index"
-                  >
-                    <a-space>
-                      <a-checkbox value="1"></a-checkbox>
-                      <text>{{ item.name }}</text>
-                      <text class="textTranslation">{{
-                        item.translation
-                      }}</text>
-                    </a-space>
-                  </div>
+                  <template v-for="(item, index) in Array_Tag" :key="index">
+                    <div class="promptTag customTransition" :class="{ promptTagChecked: item.isChecked === true }">
+                      <a-space>
+                        <a-checkbox v-model="item.isChecked">
+                          <a-space>
+                            <text>{{ item.name }}</text>
+                            <text class="textTranslation">{{
+                              item.translation
+                            }}</text>
+                          </a-space>
+                        </a-checkbox>
+                        <a-button type="text" shape="circle">
+                          <template #icon>
+                            <icon-copy :style="{ fontSize: '16px' }" />
+                          </template>
+                        </a-button>
+                      </a-space>
+                    </div>
+                  </template>
                 </a-space>
               </a-tab-pane>
               <a-tab-pane key="1" title="光照">
@@ -84,14 +90,17 @@ export default {
         {
           name: "masterpiece",
           translation: "杰作",
+          isChecked: true,
         },
         {
           name: "best quality",
           translation: "最好的质量",
+          isChecked: false,
         },
         {
           name: "extremely detailed CG unity 8k wallpaper",
           translation: "最高质量",
+          isChecked: false,
         },
       ],
     };
@@ -135,11 +144,11 @@ export default {
   /* 工具 class */
   transition: all 0.25s;
 }
-.arco-tabs-tab{
+.arco-tabs-tab {
   /* 标签页固定高度 */
   height: 48px;
 }
-.arco-tabs-tab-title{
+.arco-tabs-tab-title {
   /* 标签页标题 */
   transition: all 0.25s;
 }
@@ -147,5 +156,4 @@ export default {
   /* 标签页内容切换动效 */
   transition: all 0.25s;
 }
-
 </style>

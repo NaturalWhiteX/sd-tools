@@ -13,6 +13,7 @@ $cardBorderRadius: 16px;
 
   .menuLeft {
     padding-top: 18px;
+    height: 100%;
     border-right: 1px solid $borderColor;
   }
 
@@ -32,6 +33,7 @@ $cardBorderRadius: 16px;
 // 全局
 
 .promptTag {
+  // 标签
   height: 36px;
   border-radius: 4px;
   background-color: #f7f9fa;
@@ -41,9 +43,19 @@ $cardBorderRadius: 16px;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  
 
-  .textTranslation{
+  .textTranslation {
     color: #999999;
+  }
+}
+
+.promptTagChecked {
+  // 标签 - 被选中
+  background-color: #2d5cf6;
+  text {
+    color: $white;
+  }
+  .textTranslation {
+    color: $white;
   }
 }

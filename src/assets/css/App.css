@@ -14,6 +14,7 @@
 
 .Picklist .menuLeft {
   padding-top: 18px;
+  height: 100%;
   border-right: 1px solid #e5e6eb;
 }
 
@@ -51,5 +52,17 @@
 
 .promptTag .textTranslation {
   color: #999999;
+}
+
+.promptTagChecked {
+  background-color: #2d5cf6;
+}
+
+.promptTagChecked text {
+  color: #ffffff;
+}
+
+.promptTagChecked .textTranslation {
+  color: #ffffff;
 }
 /*# sourceMappingURL=App.css.map */
