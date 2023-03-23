@@ -1,33 +1,50 @@
 .Picklist {
-  height: 800px;
+  height: 1000px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 8px;
   margin: 24px 12px;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
+  flex-flow: row nowrap;
 }
-
 .Picklist .menuLeft {
   padding-top: 18px;
   height: 100%;
   border-right: 1px solid #e5e6eb;
 }
-
 .Picklist .PickMain {
   padding: 12px 24px;
 }
 
 .TagProcessing {
-  height: 800px;
+  height: 1000px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 8px;
   margin: 24px 12px;
   padding: 12px;
+}
+.TagProcessing .mainContent {
+  padding: 0 12px;
+}
+.TagProcessing .mainContent .tagBoxArea {
+  margin: 12px 0;
+  height: 240px;
+  border-radius: 8px;
+  border: 2px dashed #e8e8e9;
+}
+.TagProcessing .mainContent .formatButtonContent {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  color: #999999;
+}
+.TagProcessing .mainContent .generateTags {
+  margin-top: 36px;
+}
+.TagProcessing .mainContent .generateTags .generateTagsTitle {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
 }
 
 .promptTag {
@@ -35,34 +52,23 @@
   border-radius: 4px;
   background-color: #f7f9fa;
   padding: 0px 12px;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  user-select: none;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-flow: row nowrap;
-          flex-flow: row nowrap;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
 }
-
 .promptTag .textTranslation {
   color: #999999;
 }
 
 .promptTagChecked {
   background-color: #2d5cf6;
+  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.16);
 }
-
 .promptTagChecked text {
   color: #ffffff;
 }
-
 .promptTagChecked .textTranslation {
-  color: #ffffff;
-}
-/*# sourceMappingURL=App.css.map */
+  color: rgba(255, 255, 255, 0.5);
+}/*# sourceMappingURL=App.css.map */

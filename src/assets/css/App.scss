@@ -1,10 +1,10 @@
 $borderColor: #e5e6eb;
-$primaryColor: #395bed;
+$primaryColor: #165dff;
 $white: #ffffff;
-$cardBorderRadius: 16px;
+$cardBorderRadius: 8px;
 
 .Picklist {
-  height: 800px;
+  height: 1000px;
   background: $white;
   border-radius: $cardBorderRadius;
   margin: 24px 12px;
@@ -23,11 +23,37 @@ $cardBorderRadius: 16px;
 }
 
 .TagProcessing {
-  height: 800px;
+  height: 1000px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: $cardBorderRadius;
   margin: 24px 12px;
   padding: 12px;
+  .mainContent {
+    padding: 0 12px;
+    .tagBoxArea {
+      margin: 12px 0;
+      height: 240px;
+      border-radius: $cardBorderRadius;
+      border: 2px dashed #e8e8e9;
+    }
+    .formatButtonContent{
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+      align-items: center;
+      color: #999999;
+    }
+
+    .generateTags {
+      margin-top: 36px;
+      .generateTagsTitle {
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+      }
+      
+    }
+  }
 }
 
 // 全局
@@ -38,6 +64,8 @@ $cardBorderRadius: 16px;
   border-radius: 4px;
   background-color: #f7f9fa;
   padding: 0px 12px;
+  user-select: none;
+  
   // flex
   display: flex;
   flex-flow: row nowrap;
@@ -52,10 +80,11 @@ $cardBorderRadius: 16px;
 .promptTagChecked {
   // 标签 - 被选中
   background-color: #2d5cf6;
+  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.16);
   text {
     color: $white;
   }
   .textTranslation {
-    color: $white;
+    color: rgba(255, 255, 255, 0.5);
   }
 }
