@@ -13,6 +13,7 @@
               :default-selected-keys="[ArrayForMenu.ArrayMenu[0].menuId]"
               :selected-keys="menuSelected"
             >
+              <!-- 菜单项 -->
               <a-menu-item
                 v-for="(item, index) in ArrayForMenu.ArrayMenu"
                 :key="item.menuId"
@@ -27,11 +28,24 @@
             <a-alert
               >操作说明：点击便签复选框将标签选入暂存箱，点击标签尾部图标复制到剪切板</a-alert
             >
-            <a-tabs :default-active-key="ArrayChildMenu[0].childMenuId" :active-key="childMenuSelected">
-              <div v-for="(item,indexChildMenu) in ArrayChildMenu" :key="item.childMenuId" >
-                <a-tab-pane :key="item.childMenuId" :title="item.childMenuName" @click="ChildMenuClick(indexChildMenu)">
+            <!-- 标签页 -->
+            <a-tabs
+              :default-active-key="ArrayChildMenu[0].childMenuId"
+              v-model:active-key="childMenuSelected"
+              @change="ChildMenuClick()"
+            >
+              <div v-for="item in ArrayChildMenu" :key="item.childMenuId">
+                <a-tab-pane
+                  :key="item.childMenuId"
+                  :title="item.childMenuName"
+                >
+                  <text>{{ item.childMenuId }}</text>
+                  <!-- 标签 -->
                   <a-space wrap size="medium" style="padding-top: 12px">
-                    <template v-for="(item, indexPrompt) in ArrayPrompt" :key="indexPrompt">
+                    <template
+                      v-for="(item, indexPrompt) in ArrayPrompt"
+                      :key="indexPrompt"
+                    >
                       <div
                         class="promptTag customTransition"
                         :class="{ promptTagChecked: item.isChecked === true }"
@@ -134,7 +148,7 @@ export default {
     return {
       ArrayForMenu: ArrayForMenuTemp,
       menuSelected: "A",
-      childMenuSelected: '',
+      childMenuSelected: "A01",
       ArrayChildMenu: [
         {
           childMenuId: "",
@@ -174,8 +188,8 @@ export default {
     let that = this;
     that.filterChildMenu();
     that.filterPrompt();
-    console.log(that.ArrayChildMenu);
-    console.log(that.ArrayPrompt);
+    console.log("ArrayChildMenu", that.ArrayChildMenu);
+    console.log("ArrayPrompt", that.ArrayPrompt);
   },
   methods: {
     MenuClick(index) {
@@ -183,11 +197,12 @@ export default {
       that.menuSelected = that.ArrayForMenu.ArrayMenu[index].menuId;
       that.filterChildMenu();
     },
-    ChildMenuClick(index) {
+    ChildMenuClick() {
       let that = this;
+      let tempStr = that.childMenuSelected.substring(1);
+      let index = parseInt(tempStr) - 1;
       that.childMenuSelected = that.ArrayChildMenu[index].childMenuId;
       that.filterPrompt();
-      console.log(that.ArrayPrompt);
     },
     filterChildMenu() {
       let that = this;
@@ -195,12 +210,14 @@ export default {
         return value.belongMenuId === that.menuSelected ? true : false;
       });
     },
-    filterPrompt(){
+    filterPrompt() {
       let that = this;
-      that.ArrayPrompt = that.ArrayForMenu.ArrayPrompt.filter((value)=>{
-        return value.belongChildMenuID === that.childMenuSelected ? true : false;
-      })
-    }
+      that.ArrayPrompt = that.ArrayForMenu.ArrayPrompt.filter((value) => {
+        return value.belongChildMenuID === that.childMenuSelected
+          ? true
+          : false;
+      });
+    },
   },
 };
 </script>
@@ -220,7 +237,9 @@ h2 {
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
-
+.arco-col {
+  padding-right: 12px !important;
+}
 .arco-menu-item {
   padding-left: 24px !important;
 }

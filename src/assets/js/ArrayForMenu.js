@@ -63,6 +63,11 @@ let ArrayChildMenu = [
         belongMenuId:'A',
         childMenuName:'其他'
     },
+    {
+        childMenuId:'B01',
+        belongMenuId:'B',
+        childMenuName:'常用'
+    },
 ]
 
 let ArrayPrompt = [
@@ -81,6 +86,12 @@ let ArrayPrompt = [
     {
         promptUUID:'jdighusdf',
         belongChildMenuID: 'A01',
+        promptName: 'extremely detailed CG unity 8k wallpapery',
+        promptTranslation: '极为详细的CG unity 8K壁纸'
+    },
+    {
+        promptUUID:'jishfn',
+        belongChildMenuID: 'A02',
         promptName: 'extremely detailed CG unity 8k wallpapery',
         promptTranslation: '极为详细的CG unity 8K壁纸'
     },
