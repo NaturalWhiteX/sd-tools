@@ -3,8 +3,15 @@ $primaryColor: #165dff;
 $white: #ffffff;
 $cardBorderRadius: 8px;
 
+.pageContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
 .Picklist {
-  height: 1000px;
+  width: 700px;
+  // height: 1000px;
+  box-sizing: border-box;
   background: $white;
   border-radius: $cardBorderRadius;
   margin: 24px 12px;
@@ -12,22 +19,59 @@ $cardBorderRadius: 8px;
   flex-flow: row nowrap;
 
   .menuLeft {
+    width: 80px;
+    height: 98%;
     padding-top: 18px;
-    height: 100%;
     border-right: 1px solid $borderColor;
   }
 
   .PickMain {
+    width: 600px;
     padding: 12px 24px;
+
+    // 子菜单样式
+    .tabsChildMenu {
+      padding: 16px 0;
+      // flex
+      display: flex;
+      flex-flow: row wrap;
+
+      .titleChildMenu {
+        font-size: 24px;
+        font-weight: bold;
+        color: #999999;
+        user-select: none;
+      }
+
+      .childMenuItem:hover {
+        background-color: #f2f3f5;
+        border-radius: $cardBorderRadius;
+        cursor: pointer;
+        transition: all 0.25s;
+      }
+
+      .titleChildMenuActived {
+        color: #333333;
+        border-bottom: 4px solid #333333;
+      }
+    }
+
+    .tabsChildMenuContent {
+      padding-top: 12px;
+      display: flex;
+      flex-flow: row wrap;
+    }
   }
 }
 
 .TagProcessing {
-  height: 1000px;
+  // height: 1000px;
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: $cardBorderRadius;
   margin: 24px 12px;
   padding: 12px;
+  padding-bottom: 36px;
   .mainContent {
     padding: 0 12px;
     .tagBoxArea {
@@ -35,8 +79,9 @@ $cardBorderRadius: 8px;
       height: 240px;
       border-radius: $cardBorderRadius;
       border: 2px dashed #e8e8e9;
+      padding: 12px;
     }
-    .formatButtonContent{
+    .formatButtonContent {
       display: flex;
       flex-flow: row nowrap;
       justify-content: flex-end;
@@ -51,7 +96,6 @@ $cardBorderRadius: 8px;
         flex-flow: row;
         justify-content: space-between;
       }
-      
     }
   }
 }
@@ -63,9 +107,12 @@ $cardBorderRadius: 8px;
   height: 36px;
   border-radius: 4px;
   background-color: #f7f9fa;
-  padding: 0px 12px;
   user-select: none;
-  
+
+  padding: 0px 12px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+
   // flex
   display: flex;
   flex-flow: row nowrap;
