@@ -35,6 +35,10 @@ let ArrayMenu = [
         menuId:'I',
         menuName: '首饰'
     },
+    {
+        menuId:'Z',
+        menuName: '投稿'
+    }
 ]
 
 let ArrayChildMenu = [
@@ -68,6 +72,11 @@ let ArrayChildMenu = [
         belongMenuId:'B',
         childMenuName:'常用'
     },
+    {
+        childMenuId:'Z01',
+        belongMenuId:'Z',
+        childMenuName:'未分类'
+    }
 ]
 
 let ArrayPrompt = [
@@ -92,8 +101,8 @@ let ArrayPrompt = [
     {
         promptUUID:'jishfn',
         belongChildMenuID: 'A02',
-        promptName: 'extremely detailed CG unity 8k wallpapery',
-        promptTranslation: '极为详细的CG unity 8K壁纸'
+        promptName: 'volumetric lighting',
+        promptTranslation: '体积光'
     },
 ]
 

@@ -61,13 +61,16 @@
           </div>
           <!-- 标签 -->
           <div class="tabsChildMenuContent">
-            <template v-for="(item, index) in ArrayPrompt" :key="index">
+            <template v-for="(item, index) in ArrayPromptShow" :key="index">
               <div
                 class="promptTag cTransition"
                 :class="{ promptTagChecked: item.isChecked === true }"
               >
                 <a-space>
-                  <a-checkbox v-model="item.isChecked" @change="checkBoxChange()">
+                  <a-checkbox
+                    v-model="item.isChecked"
+                    @change="checkBoxChange(index, item.isChecked)"
+                  >
                     <a-space>
                       <text>{{ item.promptName }}</text>
                       <text class="textTranslation">{{
@@ -78,7 +81,7 @@
                   <a-button
                     type="text"
                     shape="circle"
-                    @click="() => this.$message.info('已复制此标签到剪切板')"
+                    @click="copyToClipboard(item.promptName)"
                   >
                     <template #icon>
                       <template v-if="!item.isChecked">
@@ -106,55 +109,89 @@
 
       <!-- 标签处理 -->
       <div class="TagProcessing">
-        <div class="mainContent">
-          <a-space direction="vertical" fill>
-            <h2>标签暂存箱</h2>
-            <a-space>
-              <text>编辑权重</text>
-              <a-switch disabled="" />
-            </a-space>
-            <div class="tagBoxArea">
-              <a-space size="medium" :wrap="true">
-                <template
-                  v-for="(item, index) in ArrayPromptSelected"
-                  :key="index"
-                >
-                  <a-tag closable>{{item.promptName}}</a-tag>
-                </template>
+        <transition>
+          <div class="mainContent">
+            <a-space direction="vertical" fill>
+              <h2>标签暂存箱</h2>
+              <a-space>
+                <text>编辑权重</text>
+                <a-switch disabled="" />
               </a-space>
-            </div>
-            <div class="formatButtonContent">
-              <text
-                >“黄色标签”为当前系统内暂未收录的标签，“一键收录”将收录这些黄色标签。</text
-              >
-              <a-button style="margin-left: 12px">一键收录</a-button>
-            </div>
-          </a-space>
-          <a-space class="generateTags" direction="vertical" fill>
-            <a-space class="generateTagsTitle">
-              <h2>生成提示词</h2>
-              <a-space size="medium">
-                <a-button>清空</a-button>
-                <a-button
-                  type="primary"
-                  @click="() => this.$message.info('已复制全部内容到剪切板')"
-                  >复制到剪切板</a-button
-                >
-              </a-space>
+              <div class="tagBoxArea">
+                <a-space :wrap="true">
+                  <div
+                    class="boxItem"
+                    v-for="(item, index) in ArrayPromptSelected"
+                    :key="index"
+                  >
+                    <a-trigger
+                      position="top"
+                      auto-fit-position
+                      :unmount-on-close="false"
+                    >
+                      <template v-if="item.belongChildMenuID !== 'Z01'">
+                        <a-tag closable>{{ item.promptName }}</a-tag>
+                      </template>
+                      <template v-else>
+                        <a-tag color="orange" closable>{{
+                          item.promptName
+                        }}</a-tag>
+                      </template>
+                      <div class="weightText"></div>
+                      <template #content>
+                        <div class="demo-basic">
+                          {{ item.promptName }}
+                          <a-empty />
+                        </div>
+                      </template>
+                    </a-trigger>
+                  </div>
+                </a-space>
+              </div>
+              <transition name="transitonTranslateY">
+                <div class="formatButtonContent" v-show="checkIncluded">
+                  <text>
+                    黄色标签为当前系统内暂未收录的标签，点击“一键收录”来快速收录!
+                  </text>
+                  <a-button style="margin-left: 12px">一键收录</a-button>
+                </div>
+              </transition>
             </a-space>
+            <a-space class="generateTags" direction="vertical" fill>
+              <a-space class="generateTagsTitle">
+                <h2>生成提示词</h2>
+                <a-space size="medium">
+                  <a-popconfirm
+                    content="确定要清空吗？"
+                    type="warning"
+                    @ok="clearTextArea()"
+                  >
+                    <a-button>清空</a-button>
+                  </a-popconfirm>
 
-            <a-textarea
-              placeholder="将提示词粘贴在这里可以自动识别"
-              :auto-size="{ minRows: 10, maxRows: 15 }"
-            />
-            <div class="formatButtonContent">
-              <text>
-                中文逗号全部变成英文逗号，每个逗号后加空格，识别所有标签至暂存箱。
-              </text>
-              <a-button style="margin-left: 12px">一键格式化</a-button>
-            </div>
-          </a-space>
-        </div>
+                  <a-button
+                    type="primary"
+                    @click="copyToClipboard(StringPromptInput)"
+                    >复制到剪切板</a-button
+                  >
+                </a-space>
+              </a-space>
+
+              <a-textarea
+                v-model:model-value="StringPromptInput"
+                placeholder="将提示词粘贴在这里可以自动识别"
+                :auto-size="{ minRows: 10, maxRows: 15 }"
+                @blur="textareaBlur()"
+              />
+              <div class="formatButtonContent">
+                <text> 中文逗号全部变成英文逗号，每个逗号后加空格。 </text>
+                <a-button style="margin-left: 12px" @click="formatString()"
+                  >一键格式化</a-button
+                >
+              </div>
+            </a-space>
+          </div>
+        </transition>
       </div>
     </div>
     <!-- pageContainer end -->
@@ -170,8 +207,9 @@ export default {
   data() {
     return {
       ArrayForMenu: ArrayForMenuTemp,
-      menuSelected: "A",
+      menuSelected: ["A"],
       childMenuSelected: "A01",
+      isEditWeight: false,
       ArrayChildMenu: [
         {
           childMenuId: "",
@@ -179,7 +217,7 @@ export default {
           childMenuName: "",
         },
       ],
-      ArrayPrompt: [
+      ArrayPromptShow: [
         {
           promptUUID: "",
           belongChildMenuID: "",
@@ -188,7 +226,15 @@ export default {
         },
       ],
       ArrayPromptSelected: [],
+      StringPromptInput: "",
     };
+  },
+  computed: {
+    checkIncluded() {
+      return this.ArrayPromptSelected.some(
+        (item) => item.belongChildMenuID === "Z01"
+      );
+    },
   },
   mounted() {
     let that = this;
@@ -217,30 +263,184 @@ export default {
       // 根据 菜单列表 过滤 子菜单列表
       let that = this;
       that.ArrayChildMenu = that.ArrayForMenu.ArrayChildMenu.filter((value) => {
-        return value.belongMenuId === that.menuSelected ? true : false;
+        return value.belongMenuId === that.menuSelected[0] ? true : false;
       });
     },
     filterPrompt() {
       // 根据 子菜单列表 过滤 提示词列表
       let that = this;
-      that.ArrayPrompt = that.ArrayForMenu.ArrayPrompt.filter((value) => {
+      that.ArrayPromptShow = that.ArrayForMenu.ArrayPrompt.filter((value) => {
         return value.belongChildMenuID === that.childMenuSelected
           ? true
           : false;
       });
+      that.refreshPromptShow();
     },
-    checkBoxChange(){
+    refreshPromptShow() {
+      // 刷新提示词库的展示情况
       let that = this;
-      let ArrayPromptSelected = []; 
-      ArrayPromptSelected = that.ArrayPrompt.filter((value)=>{
-        let result = false;
-        if(value.isChecked && value.isChecked === true){
-          result = true;
+      that.ArrayPromptShow.forEach(function (item) {
+        let foundItem = that.ArrayPromptSelected.find(function (selectedItem) {
+          return selectedItem.promptName === item.promptName;
+        });
+
+        if (foundItem) {
+          item.isChecked = true;
+        } else {
+          item.isChecked = false;
         }
-        return result;
-      })
-      that.ArrayPromptSelected = ArrayPromptSelected;
-    }
+      });
+    },
+
+    checkBoxChange(index, checkStatus) {
+      // 词库中的复选框改变时
+      let that = this;
+      let promptSelected = that.ArrayPromptShow[index];
+      let promptSelectName = promptSelected.promptName;
+      if (checkStatus === true) {
+        // 如果：选中
+        that.ArrayPromptSelected.push(promptSelected);
+        // 拼接 prompt 字符串
+        that.StringPromptInput += promptSelectName + ", ";
+      } else {
+        // 否则：取消
+        that.ArrayPromptSelected = that.ArrayPromptSelected.filter(
+          (item) => item.promptUUID !== promptSelected.promptUUID
+        );
+        // 删除指定 prompt
+        let deleteLength = promptSelectName.length + 2;
+        let deleteIndex = that.StringPromptInput.lastIndexOf(promptSelectName);
+        let resultStr = that.StringPromptInput;
+        resultStr =
+          resultStr.substring(0, deleteIndex) +
+          resultStr.substring(deleteIndex + deleteLength);
+        that.StringPromptInput = resultStr;
+      }
+    },
+
+    copyToClipboard(string) {
+      let that = this;
+      navigator.clipboard
+        .writeText(string)
+        .then(() => {
+          that.$message.info("已复制到剪切板");
+        })
+        .catch(() => {
+          that.$message.warning(
+            "复制失败！可能是浏览器版本太旧了，这个我暂时也没办法呢..."
+          );
+        });
+    },
+
+    textareaBlur() {
+      // 文本域失焦时, 匹配词库
+      let that = this;
+      if (that.StringPromptInput.length === 0) {
+        // 如果文本域为空
+        for (let i = 0; i < that.ArrayPromptShow.length; i++) {
+          that.ArrayPromptShow[i].isChecked = false;
+        }
+        that.ArrayPromptSelected.length = 0; // 清空数组
+        return;
+      }
+      // 如果文本域不为空
+      let PromptArray = [];
+      let StringPrmoptArray = that.StringPromptInput.split(/[，,]/)
+        .map((str) => str.trim())
+        .filter(Boolean);
+
+      console.log(StringPrmoptArray);
+
+      // 将库 ArrayPromptShow 中不在文本域的提示词取消勾选
+      that.ArrayPromptShow.forEach(function (item) {
+        if (!StringPrmoptArray.includes(item.promptName)) {
+          item.isChecked = false;
+        }
+      });
+
+      StringPrmoptArray.forEach((str) => {
+        // 对于文本域中的每一个提示词
+        let findIndex = -1;
+        const foundPrompt = that.ArrayPromptShow.find(function (prompt, index) {
+          // 在词库中寻找这个提示词
+          findIndex = index;
+          let result = false;
+          if (prompt.promptName === str) {
+            result = true;
+          } else {
+            that.ArrayPromptShow[index].isChecked = false;
+          }
+          return result;
+        });
+        let tempPrompt = {
+          promptUUID: "",
+          belongChildMenuID: "",
+          promptName: str,
+          promptTranslation: "",
+          promptWeight: 1,
+        };
+        if (foundPrompt) {
+          // 如果该提示词在词库中找得到
+          tempPrompt = {
+            promptUUID: foundPrompt.promptUUID,
+            belongChildMenuID: foundPrompt.belongChildMenuID,
+            promptName: str,
+            promptTranslation: foundPrompt.promptTranslation,
+          };
+          console.log(findIndex);
+          that.ArrayPromptShow[findIndex].isChecked = true;
+        } else {
+          // 如果找不到，创建一个新的 prompt 对象，并放入已选择的提示词库 ArrayPromptSelected 中
+          let tempUUID = crypto.randomUUID();
+          tempPrompt = {
+            promptUUID: tempUUID,
+            belongChildMenuID: "Z01",
+            promptName: str,
+            promptTranslation: "无翻译",
+          };
+        }
+        PromptArray.push(tempPrompt);
+      });
+
+      that.ArrayPromptSelected = PromptArray;
+      that.refreshPromptShow();
+    },
+
+    formatString() {
+      // 格式化字符串
+      let that = this;
+      let tempStr = that.StringPromptInput;
+
+      let tempStrFormatted = "";
+      let tempStrArray = tempStr.split("\n");
+      for (let i = 0; i < tempStrArray.length; i++) {
+        let str = tempStrArray[i];
+        // 1. 将中文逗号替换为英文逗号
+        str = str.replace(/，/g, ",");
+        // 2. 删除连续的空格
+        str = str.replace(/\s+/g, " ");
+        // 3. 删除逗号前后的空格
+        str = str.replace(/\s*,\s*/g, ",");
+        // 4. 如果多个逗号相连，只保留一个逗号
+        str = str.replace(/,{2,}/g, ",");
+        // 5. 如果一个逗号后面没有空格，添加一个空格
+        str = str.replace(/,(?!\s)/g, ", ");
+        tempStrFormatted += str.trim();
+        if (i !== tempStrArray.length - 1) {
+          tempStrFormatted += "\n";
+        }
+      }
+
+      tempStr = tempStrFormatted;
+      that.StringPromptInput = tempStr;
+    },
+
+    clearTextArea() {
+      let that = this;
+      that.StringPromptInput = "";
+      that.ArrayPromptSelected.length = 0;
+      that.refreshPromptShow();
+    },
   },
 };
 </script>
@@ -258,6 +458,11 @@ h2 {
 
 text {
   line-height: 24px;
+}
+
+::selection {
+  color: #333333;
+  background: #fff0ce;
 }
 
 .arco-menu-item {
@@ -298,6 +503,15 @@ text {
 .arco-btn-primary {
   box-shadow: 0px 4px 10px 0px rgba(54, 98, 236, 0.3);
 }
+.arco-btn-size-mini {
+  border-radius: 4px !important;
+  height: 24px !important;
+  box-shadow: none !important;
+}
+
+.arco-trigger-content {
+  border-radius: 8px !important;
+}
 
 /* ========== 动画 ========== */
 
@@ -306,19 +520,32 @@ text {
   transition: all 0.25s;
 }
 
-.arco-tabs-tab {
-  /* 标签页固定高度 */
-  height: 48px;
-}
-
-.arco-tabs-tab-title {
-  /* 标签页标题 */
-  /* transition: all 0.25s; */
-  user-select: none;
-}
-
-.arco-tabs-content-list {
-  /* 标签页内容切换动效 */
+.arco-space-item {
   transition: all 0.25s;
+}
+.arco-tag {
+  transition: all 0.25s;
+}
+
+.transitonScale-enter-active,
+.transitonScale-leave-active {
+  transition: all 0.25s;
+}
+
+.transitonScale-enter-from,
+.transitonScale-leave-to {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+.transitonTranslateY-enter-active,
+.transitonTranslateY-leave-active {
+  transition: all 0.25s;
+}
+
+.transitonTranslateY-enter-from,
+.transitonTranslateY-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
 }
 </style>
