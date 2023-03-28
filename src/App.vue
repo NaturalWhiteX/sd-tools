@@ -1,230 +1,248 @@
 <template>
   <div id="app">
-    <a-page-header
-      :style="{ background: 'var(--color-bg-2)' }"
-      title="SD Tools"
-      subtitle="Stable Diffusion 提示词助手"
-      :show-back="false"
-    >
-      <template #extra>
-        <a-radio-group type="button" default-value="large">
-          <a-radio value="mini">Mini</a-radio>
-          <a-radio value="small">Small</a-radio>
-          <a-radio value="large">Large</a-radio>
-        </a-radio-group>
-      </template>
-    </a-page-header>
-    <!-- 图示选择 -->
-    <div class="PickImage"></div>
+    <div id="appPage">
+      <a-page-header
+        :style="{ background: 'rgba(255,255,255,0.9)' }"
+        title="SD Tools"
+        subtitle="Stable Diffusion 提示词助手"
+        :show-back="false"
+      >
+        <template #extra>
+          <a-radio-group type="button" default-value="large">
+            <a-radio value="mini">Mini</a-radio>
+            <a-radio value="small">Small</a-radio>
+            <a-radio value="large">Large</a-radio>
+          </a-radio-group>
+        </template>
+      </a-page-header>
+      <!-- 图示选择 -->
+      <div class="PickImage"></div>
 
-    <div class="pageContainer">
-      <div class="Picklist">
-        <!-- 菜单 -->
-        <div class="menuLeft">
-          <a-menu
-            mode="vertical"
-            :default-selected-keys="[ArrayForMenu.ArrayMenu[0].menuId]"
-            :selected-keys="menuSelected"
-          >
-            <!-- 菜单项 -->
-            <a-menu-item
-              v-for="(item, index) in ArrayForMenu.ArrayMenu"
-              :key="item.menuId"
-              @click="MenuClick(index)"
+      <div class="pageContainer">
+        <div class="Picklist">
+          <!-- 菜单 -->
+          <div class="menuLeft">
+            <a-menu
+              mode="vertical"
+              :default-selected-keys="[ArrayForMenu.ArrayMenu[0].menuId]"
+              :selected-keys="menuSelected"
             >
-              {{ item.menuName }}
-            </a-menu-item>
-          </a-menu>
-        </div>
-
-        <div class="PickMain">
-          <!-- 子菜单 -->
-          <div class="tabsChildMenu">
-            <a-space size="large">
-              <!-- 子菜单项 -->
-              <div
-                class="childMenuItem"
-                v-for="(item, index) in ArrayChildMenu"
-                :key="item.childMenuId"
-                @click="ChildMenuClick(index)"
+              <!-- 菜单项 -->
+              <a-menu-item
+                v-for="(item, index) in ArrayForMenu.ArrayMenu"
+                :key="item.menuId"
+                @click="MenuClick(index)"
               >
-                <text
-                  class="titleChildMenu cTransition"
-                  :class="{
-                    titleChildMenuActived:
-                      childMenuSelected === item.childMenuId,
-                  }"
-                  >{{ item.childMenuName }}</text
-                >
-              </div>
-            </a-space>
+                {{ item.menuName }}
+              </a-menu-item>
+            </a-menu>
           </div>
-          <!-- 标签 -->
-          <div class="tabsChildMenuContent">
-            <template v-for="(item, index) in ArrayPromptShow" :key="index">
-              <div
-                class="promptTag cTransition"
-                :class="{ promptTagChecked: item.isChecked === true }"
-              >
-                <a-space>
-                  <a-checkbox
-                    v-model="item.isChecked"
-                    @change="checkBoxChange(index, item.isChecked)"
-                  >
-                    <a-space>
-                      <text>{{ item.promptName }}</text>
-                      <text class="textTranslation">{{
-                        item.promptTranslation
-                      }}</text>
-                    </a-space>
-                  </a-checkbox>
-                  <a-button
-                    type="text"
-                    shape="circle"
-                    @click="copyToClipboard(item.promptName)"
-                  >
-                    <template #icon>
-                      <template v-if="!item.isChecked">
-                        <icon-copy :style="{ fontSize: '16px' }" />
-                      </template>
-                      <template v-else>
-                        <icon-copy
-                          :style="{
-                            fontSize: '16px',
-                            color: '#ffffff',
-                          }"
-                        />
-                      </template>
-                    </template>
-                  </a-button>
-                  <!-- 标签内的内容 end -->
-                </a-space>
-              </div>
-            </template>
-          </div>
-          <!-- 标签 end -->
-        </div>
-        <!-- pickMain end -->
-      </div>
 
-      <!-- 标签处理 -->
-      <div class="TagProcessing">
-        <transition>
-          <div class="mainContent">
-            <a-space direction="vertical" fill>
-              <h2>标签暂存箱</h2>
-              <div class="matchDatabse">
-                <text>Tips：将鼠标悬浮在标签上试一试</text>
-                <a-button @click="matchDatabase()" :loading="buttonMatchLoading"
-                  >匹配词库</a-button
+          <div class="PickMain">
+            <!-- 子菜单 -->
+            <div class="tabsChildMenu">
+              <a-space size="large">
+                <!-- 子菜单项 -->
+                <div
+                  class="childMenuItem"
+                  v-for="(item, index) in ArrayChildMenu"
+                  :key="item.childMenuId"
+                  @click="ChildMenuClick(index)"
                 >
-              </div>
-              <div class="tagBoxArea">
-                <a-space :wrap="true">
-                  <div
-                    class="boxItem"
-                    v-for="(item, index) in ArrayPromptSelected"
-                    :key="index"
+                  <text
+                    class="titleChildMenu cTransition"
+                    :class="{
+                      titleChildMenuActived:
+                        childMenuSelected === item.childMenuId,
+                    }"
+                    >{{ item.childMenuName }}</text
                   >
-                    <a-trigger
-                      position="top"
-                      auto-fit-position
-                      :unmount-on-close="false"
-                      :mouse-enter-delay="750"
-                    >
-                      <template v-if="item.belongChildMenuID !== 'Z01'">
-                        <div class="selectedTag flexCenter">
-                          <text>
-                            {{ item.promptName }}
-                          </text>
-                          <icon-close @click="tagCloseClick(item)" class=""></icon-close>
-                        </div>
-                      </template>
-                      <template v-else>
-                        <div
-                          class="selectedTag selectedTagUncollected flexCenter"
-                        >
-                          {{ item.promptName }}
-                        </div>
-                      </template>
-                      <div class="weightContent">
-                        <template
-                          v-for="(itemWeight, weightIndex) in item.promptWeight"
-                          :key="weightIndex"
-                        >
-                          <div class="weightItem"></div>
-                        </template>
-                      </div>
-                      <template #content>
-                        <div class="demo-basic">
-                          <a-space direction="vertical">
-                            <text>{{ item.promptName }}</text>
-                            <a-space>
-                              <text>设置权重</text>
-                              <a-input-number
-                                v-model="item.promptWeight"
-                                :style="{ width: '100px' }"
-                                size="mini"
-                                placeholder="0~5"
-                                mode="button"
-                                :max="5"
-                                :min="0"
-                              />
-                            </a-space>
-                          </a-space>
-                        </div>
-                      </template>
-                    </a-trigger>
-                  </div>
-                </a-space>
-              </div>
-              <transition name="transitonTranslateY">
-                <div class="formatButtonContent" v-show="checkIncluded">
-                  <text>
-                    黄色标签为当前系统内暂未收录的标签，点击“一键收录”来快速收录!
-                  </text>
-                  <a-button style="margin-left: 12px">一键收录</a-button>
                 </div>
-              </transition>
-            </a-space>
-            <a-space class="generateTags" direction="vertical" fill>
-              <a-space class="generateTagsTitle">
-                <h2>生成提示词</h2>
-                <a-space size="medium">
-                  <a-popconfirm
-                    content="确定要清空吗？"
-                    type="warning"
-                    @ok="clearTextArea()"
-                  >
-                    <a-button>清空</a-button>
-                  </a-popconfirm>
-
-                  <a-button
-                    type="primary"
-                    @click="copyToClipboard(StringPromptInput)"
-                    >复制到剪切板</a-button
-                  >
-                </a-space>
               </a-space>
-
-              <a-textarea
-                v-model:model-value="StringPromptInput"
-                placeholder="将提示词粘贴在这里可以自动识别"
-                :auto-size="{ minRows: 10, maxRows: 15 }"
-                @blur="textareaBlur()"
-              />
-              <div class="formatButtonContent">
-                <text> 中文逗号全部变成英文逗号，每个逗号后加空格。 </text>
-                <a-button style="margin-left: 12px" @click="formatString()"
-                  >一键格式化</a-button
+            </div>
+            <!-- 标签 -->
+            <div class="tabsChildMenuContent">
+              <template v-for="(item, index) in ArrayPromptShow" :key="index">
+                <div
+                  class="promptTag cTransition"
+                  :class="{ promptTagChecked: item.isChecked === true }"
                 >
-              </div>
-            </a-space>
+                  <a-space>
+                    <a-checkbox
+                      v-model="item.isChecked"
+                      @change="checkBoxChange(index, item.isChecked)"
+                    >
+                      <a-space>
+                        <text>{{ item.promptName }}</text>
+                        <text class="textTranslation">{{
+                          item.promptTranslation
+                        }}</text>
+                      </a-space>
+                    </a-checkbox>
+                    <a-button
+                      type="text"
+                      shape="circle"
+                      @click="copyToClipboard(item.promptName)"
+                    >
+                      <template #icon>
+                        <template v-if="!item.isChecked">
+                          <icon-copy :style="{ fontSize: '16px' }" />
+                        </template>
+                        <template v-else>
+                          <icon-copy
+                            :style="{
+                              fontSize: '16px',
+                              color: '#ffffff',
+                            }"
+                          />
+                        </template>
+                      </template>
+                    </a-button>
+                    <!-- 标签内的内容 end -->
+                  </a-space>
+                </div>
+              </template>
+            </div>
+            <!-- 标签 end -->
           </div>
-        </transition>
+          <!-- pickMain end -->
+        </div>
+
+        <!-- 标签处理 -->
+        <div class="TagProcessing">
+          <transition>
+            <div class="mainContent">
+              <a-space direction="vertical" fill>
+                <h2>标签暂存箱</h2>
+                <div class="matchDatabse">
+                  <text>Tips：将鼠标悬浮在标签上试一试</text>
+                  <a-button
+                    @click="matchDatabase()"
+                    :loading="buttonMatchLoading"
+                    >匹配词库</a-button
+                  >
+                </div>
+                <div class="tagBoxArea">
+                  <a-space :wrap="true">
+                    <template
+                      v-for="(item, index) in ArrayPromptSelected"
+                      :key="index"
+                    >
+                      <div class="boxItem">
+                        <a-trigger
+                          position="top"
+                          auto-fit-position
+                          :unmount-on-close="false"
+                          :mouse-enter-delay="750"
+                          :popup-translate="[0, -10]"
+                        >
+                          <template v-if="item.belongChildMenuID !== 'Z01'">
+                            <div class="selectedTag flexCenter">
+                              <text>
+                                {{ item.promptName }}
+                              </text>
+                              <div
+                                class="iconContent flexCenter"
+                                @click="tagCloseClick(item)"
+                              >
+                                <icon-close class="closeButton"></icon-close>
+                              </div>
+                            </div>
+                          </template>
+                          <template v-else>
+                            <div
+                              class="selectedTag selectedTagUncollected flexCenter"
+                            >
+                              <text>
+                                {{ item.promptName }}
+                              </text>
+                              <div class="iconContent flexCenter">
+                                <icon-close
+                                  @click="tagCloseClick(item)"
+                                  class="closeButton"
+                                ></icon-close>
+                              </div>
+                            </div>
+                          </template>
+                          <div class="weightContent">
+                            <template
+                              v-for="(
+                                itemWeight, weightIndex
+                              ) in item.promptWeight"
+                              :key="weightIndex"
+                            >
+                              <div class="weightItem"></div>
+                            </template>
+                          </div>
+                          <template #content>
+                            <div class="demo-basic">
+                              <a-space>
+                                <text>设置权重</text>
+                                <a-input-number
+                                  v-model="item.promptWeight"
+                                  :style="{ width: '100px' }"
+                                  size="mini"
+                                  placeholder="0~5"
+                                  mode="button"
+                                  :max="5"
+                                  :min="0"
+                                />
+                              </a-space>
+                            </div>
+                          </template>
+                        </a-trigger>
+                      </div>
+                    </template>
+                  </a-space>
+                </div>
+                <transition name="transitonTranslateY">
+                  <div class="formatButtonContent" v-show="checkIncluded">
+                    <text>
+                      黄色标签为当前系统内暂未收录的标签，点击“一键收录”来快速收录!
+                    </text>
+                    <a-button style="margin-left: 12px">一键收录</a-button>
+                  </div>
+                </transition>
+              </a-space>
+              <a-space class="generateTags" direction="vertical" fill>
+                <a-space class="generateTagsTitle">
+                  <h2>生成提示词</h2>
+                  <a-space size="medium">
+                    <a-popconfirm
+                      content="确定要清空吗？"
+                      type="warning"
+                      @ok="clearTextArea()"
+                    >
+                      <a-button>清空</a-button>
+                    </a-popconfirm>
+
+                    <a-button
+                      type="primary"
+                      @click="copyToClipboard(StringPromptInput)"
+                      >复制到剪切板</a-button
+                    >
+                  </a-space>
+                </a-space>
+
+                <a-textarea
+                  v-model:model-value="StringPromptInput"
+                  placeholder="将提示词粘贴在这里可以自动识别"
+                  :auto-size="{ minRows: 10, maxRows: 15 }"
+                  @blur="textareaBlur()"
+                />
+                <div class="formatButtonContent">
+                  <text> 中文逗号全部变成英文逗号，每个逗号后加空格。 </text>
+                  <a-button style="margin-left: 12px" @click="formatString()"
+                    >一键格式化</a-button
+                  >
+                </div>
+              </a-space>
+            </div>
+          </transition>
+        </div>
       </div>
+      <!-- pageContainer end -->
     </div>
-    <!-- pageContainer end -->
   </div>
 </template>
 
@@ -354,6 +372,9 @@ export default {
 
     copyToClipboard(string) {
       let that = this;
+      if (that.StringPromptInput.trim() === "") {
+        return;
+      }
       let tempStr = string.trim();
       if (tempStr.length !== 0) {
         tempStr = tempStr + ", ";
@@ -517,8 +538,13 @@ export default {
 <style>
 @import "./assets/css/App.css";
 
-#app {
-  background-color: #f7f7f7;
+#appPage {
+  /* background-color: #f7f7f7; */
+  /* background: linear-gradient(to bottom,#f7f7f7,#f7f7f7,#c2935b,#d17777,#1867c0,#8282d6,#373c47); */
+  /* background: linear-gradient(to bottom,#1867c0,#8282d6,#d17777,#c2935b,#4caf50); */
+  background: linear-gradient(to bottom,#E8F0F9,#F3F3FB,#FAF2F2,#F9F4EF,#EDF7EE);
+  background-size: 600% 600%;
+  animation: background-animation 60s linear infinite;
 }
 
 h2 {
@@ -620,5 +646,19 @@ text {
 .transitonTranslateY-leave-to {
   transform: translateY(-20px);
   opacity: 0;
+}
+
+/* 背景变化 */
+
+@keyframes background-animation {
+  0% {
+    background-position: top;
+  }
+  50% {
+    background-position: bottom;
+  }
+  100% {
+    background-position: top;
+  }
 }
 </style>

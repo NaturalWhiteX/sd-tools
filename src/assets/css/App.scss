@@ -99,6 +99,7 @@ $textGrey: #999999;
           height: 24px;
           background-color: #f2f3f5;
           padding: 0 8px;
+          padding-right: 0;
           border-radius: 4px;
           text {
             margin-right: 4px;
@@ -106,6 +107,15 @@ $textGrey: #999999;
         }
         .selectedTagUncollected {
           background-color: #fef7ea;
+        }
+        .iconContent {
+          width: 24px;
+          height: 24px;
+          border-radius: 24px;
+          cursor: pointer;
+        }
+        .iconContent:hover {
+          background-color: rgba(0, 0, 0, 0.1);
         }
       }
       .weightContent {
@@ -179,10 +189,9 @@ $textGrey: #999999;
 
 .demo-basic {
   padding: 10px;
-  width: 200px;
   background-color: var(--color-bg-popup);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
 }
 
 .flexCenter {
