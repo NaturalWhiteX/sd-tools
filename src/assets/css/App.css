@@ -100,6 +100,23 @@
   padding: 0 12px;
 }
 
+.TagProcessing .mainContent .matchDatabse {
+  color: #999999;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .TagProcessing .mainContent .tagBoxArea {
   margin: 12px 0;
   min-height: 240px;
@@ -118,9 +135,38 @@
           flex-flow: row nowrap;
 }
 
-.TagProcessing .mainContent .tagBoxArea .weightText {
+.TagProcessing .mainContent .tagBoxArea .boxItem .selectedTag {
+  font-size: 12px;
+  height: 24px;
+  background-color: #f2f3f5;
+  padding: 0 8px;
+  border-radius: 4px;
+}
+
+.TagProcessing .mainContent .tagBoxArea .boxItem .selectedTag text {
+  margin-right: 4px;
+}
+
+.TagProcessing .mainContent .tagBoxArea .boxItem .selectedTagUncollected {
+  background-color: #fef7ea;
+}
+
+.TagProcessing .mainContent .tagBoxArea .weightContent {
   height: 24px;
   width: 4px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+}
+
+.TagProcessing .mainContent .tagBoxArea .weightContent .weightItem {
+  height: 4px;
+  width: 4px;
+  margin-bottom: 1px;
   background-color: #165dff;
 }
 
@@ -209,5 +255,21 @@
   border-radius: 4px;
   -webkit-box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
           box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+}
+
+.flexCenter {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 /*# sourceMappingURL=App.css.map */

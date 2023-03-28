@@ -113,11 +113,12 @@
           <div class="mainContent">
             <a-space direction="vertical" fill>
               <h2>标签暂存箱</h2>
-              <a-space>
-                <text>编辑权重</text>
-                <a-switch disabled="" />
-              </a-space>
-              <a-button>匹配词库</a-button>
+              <div class="matchDatabse">
+                <text>Tips：将鼠标悬浮在标签上试一试</text>
+                <a-button @click="matchDatabase()" :loading="buttonMatchLoading"
+                  >匹配词库</a-button
+                >
+              </div>
               <div class="tagBoxArea">
                 <a-space :wrap="true">
                   <div
@@ -129,20 +130,48 @@
                       position="top"
                       auto-fit-position
                       :unmount-on-close="false"
+                      :mouse-enter-delay="750"
                     >
                       <template v-if="item.belongChildMenuID !== 'Z01'">
-                        <a-tag closable>{{ item.promptName }}</a-tag>
+                        <div class="selectedTag flexCenter">
+                          <text>
+                            {{ item.promptName }}
+                          </text>
+                          <icon-close @click="tagCloseClick(item)" class=""></icon-close>
+                        </div>
                       </template>
                       <template v-else>
-                        <a-tag color="orange" closable>{{
-                          item.promptName
-                        }}</a-tag>
+                        <div
+                          class="selectedTag selectedTagUncollected flexCenter"
+                        >
+                          {{ item.promptName }}
+                        </div>
                       </template>
-                      <div class="weightText"></div>
+                      <div class="weightContent">
+                        <template
+                          v-for="(itemWeight, weightIndex) in item.promptWeight"
+                          :key="weightIndex"
+                        >
+                          <div class="weightItem"></div>
+                        </template>
+                      </div>
                       <template #content>
                         <div class="demo-basic">
-                          {{ item.promptName }}
-                          <a-empty />
+                          <a-space direction="vertical">
+                            <text>{{ item.promptName }}</text>
+                            <a-space>
+                              <text>设置权重</text>
+                              <a-input-number
+                                v-model="item.promptWeight"
+                                :style="{ width: '100px' }"
+                                size="mini"
+                                placeholder="0~5"
+                                mode="button"
+                                :max="5"
+                                :min="0"
+                              />
+                            </a-space>
+                          </a-space>
                         </div>
                       </template>
                     </a-trigger>
@@ -231,6 +260,7 @@ export default {
       ],
       ArrayPromptSelected: [], //选中词库
       StringPromptInput: "",
+      buttonMatchLoading: false,
     };
   },
   computed: {
@@ -340,6 +370,19 @@ export default {
         });
     },
 
+    tagCloseClick(prompt) {
+      // 点击tag的叉叉，将删除此标签
+      let that = this;
+      that.ArrayPromptSelected = that.ArrayPromptSelected.filter(
+        (item) => item.promptName !== prompt.promptName
+      );
+
+      let input = that.StringPromptInput;
+      input = input.replace(prompt.promptName + ",", "");
+      that.StringPromptInput = input;
+      that.refreshPromptShow();
+    },
+
     // 文本域失焦时, 将提示词串的提示词转化为标签放入选中词库，匹配展示词库控制高亮
     textareaBlur() {
       let that = this;
@@ -357,13 +400,6 @@ export default {
       let StringPrmoptArray = that.StringPromptInput.split(/[，,]/)
         .map((str) => str.trim())
         .filter(Boolean);
-
-      // 将展示词库中不在文本域的提示词取消勾选
-      // that.ArrayPromptShow.forEach(function (item) {
-      //   if (!StringPrmoptArray.includes(item.promptName)) {
-      //     item.isChecked = false;
-      //   }
-      // });
 
       // 对于文本域中的每一个提示词
       let tempArrayPromptSelected = [];
@@ -385,7 +421,7 @@ export default {
           belongChildMenuID: "",
           promptName: str,
           promptTranslation: "",
-          promptWeight: 1,
+          promptWeight: 0,
         };
         if (foundPrompt) {
           // 如果该提示词在词库中找得到
@@ -394,7 +430,7 @@ export default {
             belongChildMenuID: foundPrompt.belongChildMenuID,
             promptName: str,
             promptTranslation: foundPrompt.promptTranslation,
-            promptWeight: 1,
+            promptWeight: 0,
           };
           that.ArrayPromptShow[findIndex].isChecked = true;
         }
@@ -405,64 +441,38 @@ export default {
     },
 
     matchDatabase() {
+      // 匹配后台词库
       let that = this;
-
-      // 如果文本域为空，直接清空选择数组和展示数组中的选中
-      if (that.StringPromptInput.length === 0) {
-        return;
-      }
-
-      // 如果文本域不为空，先将文本域的提示词串分割成字符串数组
-      let PromptArray = [];
-      let StringPrmoptArray = that.StringPromptInput.split(/[，,]/)
-        .map((str) => str.trim())
-        .filter(Boolean);
-
-      // 对于文本域中的每一个提示词
-      StringPrmoptArray.forEach((str) => {
-        let findIndex = -1;
-        const foundPrompt = that.ArrayPromptShow.find(function (prompt, index) {
-          // 在词库中寻找这个提示词，如果找到就提取出对象foundPrompt；如果找不到就将展示词库中的选中取消。
-          findIndex = index;
-          let result = false;
-          if (prompt.promptName === str) {
-            result = true;
-          } else {
-            that.ArrayPromptShow[index].isChecked = false;
-          }
-          return result;
-        });
-        let tempPrompt = {
-          promptUUID: "",
-          belongChildMenuID: "",
-          promptName: str,
-          promptTranslation: "",
-          promptWeight: 1,
-        };
-        if (foundPrompt) {
-          // 如果该提示词在词库中找得到
-          tempPrompt = {
-            promptUUID: foundPrompt.promptUUID,
-            belongChildMenuID: foundPrompt.belongChildMenuID,
-            promptName: str,
-            promptTranslation: foundPrompt.promptTranslation,
-          };
-          that.ArrayPromptShow[findIndex].isChecked = true;
-        } else {
-          // 如果找不到，创建一个新的 prompt 对象，并放入已选择的提示词库 ArrayPromptSelected 中
-          let tempUUID = crypto.randomUUID();
-          tempPrompt = {
-            promptUUID: tempUUID,
-            belongChildMenuID: "Z01",
-            promptName: str,
-            promptTranslation: "无翻译",
-          };
-        }
-        PromptArray.push(tempPrompt);
+      that.buttonMatchLoading = true; // 匹配按钮加载样式
+      let promise = new Promise((resolve) => {
+        setTimeout(() => {
+          that.buttonMatchLoading = false;
+          that.$message.info("匹配完毕");
+          resolve("success");
+        }, 1000);
       });
 
-      that.ArrayPromptSelected = PromptArray;
-      that.refreshPromptShow();
+      let ArrayPromptDatabase = that.ArrayPromptDatabase;
+      let ArrayPromptSelected = that.ArrayPromptSelected;
+      promise
+        .then(() => {
+          ArrayPromptSelected.forEach((item) => {
+            // 对于选中词库中的每一个提示词，在后台词库中匹配，匹配到就返回对象，没匹配到就返回undefine
+            const foundPrompt = ArrayPromptDatabase.find(
+              (prompt) => prompt.promptName === item.promptName
+            );
+            if (!foundPrompt) {
+              // 如果找不到，修改相关信息
+              let tempUUID = crypto.randomUUID();
+              item.promptUUID = tempUUID;
+              item.belongChildMenuID = "Z01";
+            }
+          });
+          that.ArrayPromptSelected = ArrayPromptSelected;
+        })
+        .catch((error) => {
+          that.$message.error(error);
+        });
     },
 
     formatString() {
@@ -570,6 +580,10 @@ text {
 
 .arco-trigger-content {
   border-radius: 8px !important;
+}
+
+.arco-input-number-step-button {
+  border-radius: 0px !important;
 }
 
 /* ========== 动画 ========== */

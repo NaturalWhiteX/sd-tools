@@ -2,6 +2,7 @@ $borderColor: #e5e6eb;
 $primaryColor: #165dff;
 $white: #ffffff;
 $cardBorderRadius: 8px;
+$textGrey: #999999;
 
 .pageContainer {
   display: flex;
@@ -74,23 +75,50 @@ $cardBorderRadius: 8px;
   margin: 24px 12px;
   padding: 12px;
   padding-bottom: 36px;
-  
+
   .mainContent {
     padding: 0 12px;
+    .matchDatabse {
+      color: $textGrey;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+    }
     .tagBoxArea {
       margin: 12px 0;
       min-height: 240px;
       border-radius: $cardBorderRadius;
       border: 2px dashed #e8e8e9;
       padding: 12px;
-      .boxItem{
+      .boxItem {
         display: flex;
         flex-flow: row nowrap;
+        .selectedTag {
+          font-size: 12px;
+          height: 24px;
+          background-color: #f2f3f5;
+          padding: 0 8px;
+          border-radius: 4px;
+          text {
+            margin-right: 4px;
+          }
+        }
+        .selectedTagUncollected {
+          background-color: #fef7ea;
+        }
       }
-      .weightText{
+      .weightContent {
         height: 24px;
         width: 4px;
-        background-color: $primaryColor;
+        display: flex;
+        flex-flow: column nowrap;
+        .weightItem {
+          height: 4px;
+          width: 4px;
+          margin-bottom: 1px;
+          background-color: $primaryColor;
+        }
       }
     }
 
@@ -155,4 +183,11 @@ $cardBorderRadius: 8px;
   background-color: var(--color-bg-popup);
   border-radius: 4px;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+}
+
+.flexCenter {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
 }
