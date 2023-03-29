@@ -164,28 +164,31 @@
                               </div>
                             </div>
                           </template>
-                          <div class="weightContent">
-                            <template
-                              v-for="(
-                                itemWeight, weightIndex
-                              ) in item.promptWeight"
-                              :key="weightIndex"
+                          <div
+                            class="weightContent flexCenter"
+                            v-show="
+                              item.promptWeight && item.promptWeight !== 1
+                            "
+                          >
+                            <a-tag color="arcoblue"
+                              >{{ item.promptWeight }}</a-tag
                             >
-                              <div class="weightItem"></div>
-                            </template>
                           </div>
                           <template #content>
-                            <div class="demo-basic">
+                            <div class="triggerContent">
                               <a-space>
                                 <text>设置权重</text>
                                 <a-input-number
                                   v-model="item.promptWeight"
-                                  :style="{ width: '100px' }"
+                                  :style="{ width: '90px' }"
                                   size="mini"
-                                  placeholder="0~5"
+                                  placeholder="0~2"
                                   mode="button"
-                                  :max="5"
-                                  :min="0"
+                                  :max="2"
+                                  :min="0.1"
+                                  step="0.1"
+                                  :default-value='1'
+                                  :precision="0.1"
                                 />
                               </a-space>
                             </div>
@@ -418,49 +421,69 @@ export default {
       }
 
       // 如果文本域不为空，先将文本域的提示词串分割成字符串数组
-      let StringPrmoptArray = that.StringPromptInput.split(/[，,]/)
-        .map((str) => str.trim())
-        .filter(Boolean);
+      // let StringPrmoptArray = that.StringPromptInput.split(/[，,]/)
+      //   .map((str) => str.trim())
+      //   .filter(Boolean);
+
+      let tempInputArray = that.analysisInputWeight(that.StringPromptInput);
+      console.log('tempInputArray', tempInputArray)
 
       // 对于文本域中的每一个提示词
       let tempArrayPromptSelected = [];
-      StringPrmoptArray.forEach((str) => {
+      tempInputArray.forEach((item) => {
         let findIndex = -1;
         const foundPrompt = that.ArrayPromptShow.find(function (prompt, index) {
           // 在词库中寻找这个提示词，如果找到就提取出对象foundPrompt；如果找不到就将展示词库中的选中取消。
           findIndex = index;
           let result = false;
-          if (prompt.promptName === str) {
+          if (prompt.promptName === item.promptName) {
             result = true;
           } else {
             that.ArrayPromptShow[index].isChecked = false;
           }
           return result;
         });
-        let tempPrompt = {
-          promptUUID: "",
-          belongChildMenuID: "",
-          promptName: str,
-          promptTranslation: "",
-          promptWeight: 0,
-        };
         if (foundPrompt) {
           // 如果该提示词在词库中找得到
-          tempPrompt = {
+          item = {
             promptUUID: foundPrompt.promptUUID,
             belongChildMenuID: foundPrompt.belongChildMenuID,
-            promptName: str,
+            promptName: foundPrompt.promptName,
             promptTranslation: foundPrompt.promptTranslation,
-            promptWeight: 0,
+            promptWeight: item.promptWeight,
           };
           that.ArrayPromptShow[findIndex].isChecked = true;
         }
-        tempArrayPromptSelected.push(tempPrompt);
+        tempArrayPromptSelected.push(item);
       });
       that.ArrayPromptSelected = tempArrayPromptSelected;
       that.refreshPromptShow();
     },
-
+    analysisInputWeight(inputString) {
+      let ArrayInputPrompt = [];
+      let PromptArr = inputString
+        .split(/[，,]/)
+        .map((str) => str.trim())
+        .filter(Boolean);
+      for (let i = 0; i < PromptArr.length; i++) {
+        let prompt = PromptArr[i].trim();
+        let promptObj = {};
+        promptObj.promptUUID = crypto.randomUUID();
+        promptObj.belongChildMenuID = "";
+        if (prompt.includes("(")) {
+          let re = /(.*)\((.*):(.*)\)/; //正则表达式匹配
+          let promptInfo = re.exec(prompt);
+          promptObj.promptName = promptInfo[1].trim();
+          promptObj.promptWeight = parseInt(promptInfo[3].split(".")[1]) || 0;
+        } else {
+          promptObj.promptName = prompt;
+          promptObj.promptWeight = 0;
+        }
+        promptObj.promptTranslation = "";
+        ArrayInputPrompt.push(promptObj);
+      }
+      return ArrayInputPrompt;
+    },
     matchDatabase() {
       // 匹配后台词库
       let that = this;
@@ -542,7 +565,14 @@ export default {
   /* background-color: #f7f7f7; */
   /* background: linear-gradient(to bottom,#f7f7f7,#f7f7f7,#c2935b,#d17777,#1867c0,#8282d6,#373c47); */
   /* background: linear-gradient(to bottom,#1867c0,#8282d6,#d17777,#c2935b,#4caf50); */
-  background: linear-gradient(to bottom,#E8F0F9,#F3F3FB,#FAF2F2,#F9F4EF,#EDF7EE);
+  background: linear-gradient(
+    to bottom,
+    #e8f0f9,
+    #f3f3fb,
+    #faf2f2,
+    #f9f4ef,
+    #edf7ee
+  );
   background-size: 600% 600%;
   animation: background-animation 60s linear infinite;
 }
@@ -556,8 +586,7 @@ text {
 }
 
 ::selection {
-  color: #333333;
-  background: #fff0ce;
+  background: #f7dbbf;
 }
 
 .arco-menu-item {

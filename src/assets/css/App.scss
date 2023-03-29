@@ -115,20 +115,13 @@ $textGrey: #999999;
           cursor: pointer;
         }
         .iconContent:hover {
+          transition:  all 0.5s;
           background-color: rgba(0, 0, 0, 0.1);
         }
       }
       .weightContent {
         height: 24px;
-        width: 4px;
-        display: flex;
-        flex-flow: column nowrap;
-        .weightItem {
-          height: 4px;
-          width: 4px;
-          margin-bottom: 1px;
-          background-color: $primaryColor;
-        }
+        padding: 0 8px;
       }
     }
 
@@ -151,7 +144,14 @@ $textGrey: #999999;
   }
 }
 
-// 全局
+.triggerContent {
+  padding: 10px;
+  background-color: var(--color-bg-popup);
+  border-radius: 8px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
+}
+
+// ========== 全局 ==========
 
 .promptTag {
   // 标签
@@ -185,13 +185,6 @@ $textGrey: #999999;
   .textTranslation {
     color: rgba(255, 255, 255, 0.5);
   }
-}
-
-.demo-basic {
-  padding: 10px;
-  background-color: var(--color-bg-popup);
-  border-radius: 8px;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.16);
 }
 
 .flexCenter {
