@@ -170,9 +170,9 @@
                               item.promptWeight && item.promptWeight !== 1
                             "
                           >
-                            <a-tag color="arcoblue"
-                              >{{ item.promptWeight }}</a-tag
-                            >
+                            <a-tag color="arcoblue">{{
+                              item.promptWeight
+                            }}</a-tag>
                           </div>
                           <template #content>
                             <div class="triggerContent">
@@ -187,8 +187,8 @@
                                   :max="2"
                                   :min="0.1"
                                   step="0.1"
-                                  :default-value='1'
-                                  :precision="0.1"
+                                  :default-value="1"
+                                  :precision="0.001"
                                 />
                               </a-space>
                             </div>
@@ -279,6 +279,13 @@ export default {
           promptTranslation: "",
         },
       ],
+      prompt:{
+        promptUUID: "",
+        belongChildMenuID: "",
+        promptName: "",
+        promptTranslation: "",
+        promptWeight: 1,
+      },
       ArrayPromptSelected: [], //选中词库
       StringPromptInput: "",
       buttonMatchLoading: false,
@@ -425,8 +432,8 @@ export default {
       //   .map((str) => str.trim())
       //   .filter(Boolean);
 
-      let tempInputArray = that.analysisInputWeight(that.StringPromptInput);
-      console.log('tempInputArray', tempInputArray)
+      let tempInputArray = that.analysisInput(that.StringPromptInput);
+      console.log("tempInputArray", tempInputArray);
 
       // 对于文本域中的每一个提示词
       let tempArrayPromptSelected = [];
@@ -459,30 +466,10 @@ export default {
       that.ArrayPromptSelected = tempArrayPromptSelected;
       that.refreshPromptShow();
     },
-    analysisInputWeight(inputString) {
-      let ArrayInputPrompt = [];
-      let PromptArr = inputString
-        .split(/[，,]/)
-        .map((str) => str.trim())
-        .filter(Boolean);
-      for (let i = 0; i < PromptArr.length; i++) {
-        let prompt = PromptArr[i].trim();
-        let promptObj = {};
-        promptObj.promptUUID = crypto.randomUUID();
-        promptObj.belongChildMenuID = "";
-        if (prompt.includes("(")) {
-          let re = /(.*)\((.*):(.*)\)/; //正则表达式匹配
-          let promptInfo = re.exec(prompt);
-          promptObj.promptName = promptInfo[1].trim();
-          promptObj.promptWeight = parseInt(promptInfo[3].split(".")[1]) || 0;
-        } else {
-          promptObj.promptName = prompt;
-          promptObj.promptWeight = 0;
-        }
-        promptObj.promptTranslation = "";
-        ArrayInputPrompt.push(promptObj);
-      }
-      return ArrayInputPrompt;
+
+    analysisInput(inputString) {
+      // 将 inputString 根据英文逗号分割，然后将每个元素转化为对象
+
     },
     matchDatabase() {
       // 匹配后台词库
